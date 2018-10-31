@@ -1,0 +1,24 @@
+{
+    "name" : "bayday/coin-currency-bundle",
+    "type": "symfony-bundle",
+    "description": "similar to a plugin for sylius, add a virtual currency",
+    "keywords": ["sylius", "symfony", "currency"],
+    "homepage": "https://github.com/Donjohn/MediaBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathan Gauvain",
+            "email": "jonathan.gauvain@bay-day.com",
+            "role": "Lead"
+        }
+    ],
+	"prefer-stable": true,
+    "require" : {
+        "sylius/sylius": "^4.0"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "BayDay\\CoinCurrencyBundle\\" : ""
+        }
+    }
+}

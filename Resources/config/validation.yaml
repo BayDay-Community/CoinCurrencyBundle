@@ -1,0 +1,5 @@
+Sylius\Component\Core\Model\Order:
+  properties:
+    currencyCode:
+      - BayDay\CoinCurrencyBundle\Validator\CoinCurrency:
+          groups: [BayDayCurrencyCoin]

@@ -1,0 +1,47 @@
+parameters:
+  sylius.form.type.checkout_address.validation_groups: ["%bayday.coin_currency.validation_group%"]
+  sylius.form.type.checkout_select_payment.validation_groups: ["%bayday.coin_currency.validation_group%"]
+  sylius.form.type.cart.validation_groups: ["%bayday.coin_currency.validation_group%"]
+
+services:
+  BayDay\CoinCurrencyBundle\Templating\Helper\CurrencyHelper:
+    decorates: sylius.templating.helper.currency
+    arguments:
+      $decoratedHelper: '@BayDay\CoinCurrencyBundle\Templating\Helper\CurrencyHelper.inner'
+      $coinCurrencyCode: "%bayday.coin_currency.code%"
+
+  BayDay\CoinCurrencyBundle\Converter\CurrencyNameConverter:
+    decorates: sylius.currency_name_converter
+    arguments:
+      $decoratedConverter: '@BayDay\CoinCurrencyBundle\Converter\CurrencyNameConverter.inner'
+      $translator: "@translator"
+      $coinCurrencyCode: "%bayday.coin_currency.code%"
+
+  BayDay\CoinCurrencyBundle\Form\Type\CurrencyType:
+    decorates: sylius.form.type.currency
+    arguments:
+      $decoratedForm:  '@BayDay\CoinCurrencyBundle\Form\Type\CurrencyType.inner'
+      $translator: "@translator"
+    tags:
+      - {name: form.type, lazy: true}
+
+  BayDay\CoinCurrencyBundle\Validator\CoinCurrencyValidator:
+    arguments:
+      $coinCurrencyCode: "%bayday.coin_currency.code%"
+    tags:
+      - {name: validator.constraint_validator, lazy: true}
+
+
+  BayDay\CoinCurrencyBundle\EventListener\CurrencyListener:
+    arguments:
+      $translator: "@translator"
+      $coinCurrencyCode: "%bayday.coin_currency.code%"
+    tags:
+      - {name: doctrine.event_subscriber, lazy: true}
+
+  app.coin_gateway_factory:
+    class: Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder
+    arguments:
+      $gatewayFactoryClass: BayDay\CoinCurrencyBundle\Payum\CoinPayumGatewayFactory
+    tags:
+      - {name: payum.gateway_factory_builder, factory: "%bayday.coin_currency.gateway%", lazy: true }
