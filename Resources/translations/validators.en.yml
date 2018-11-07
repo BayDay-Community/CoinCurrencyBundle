@@ -1,1 +1,2 @@
 bayday.coin_currency.validator.message: The value {{ value }} is not valid.
+bayday.coin_currency.greater_than_zero.message: Not possible having a below zero value.

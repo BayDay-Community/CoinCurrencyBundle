@@ -2,4 +2,4 @@ Sylius\Component\Core\Model\Order:
   properties:
     currencyCode:
       - BayDay\CoinCurrencyBundle\Validator\CoinCurrency:
-          groups: [BayDayCurrencyCoin]
+          groups: ["%bayday.coin_currency.validation_group%"]

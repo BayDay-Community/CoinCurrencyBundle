@@ -1,1 +1,2 @@
 bayday.coin_currency.validator.message: Cette devise {{ value }} n'existe pas.
+bayday.coin_currency.greater_than_zero.message: Impossible d'avoir une valeure négative !
