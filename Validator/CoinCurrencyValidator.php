@@ -5,6 +5,7 @@ namespace BayDay\CoinCurrencyBundle\Validator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Currency;
 use Symfony\Component\Validator\Constraints\CurrencyValidator;
+use Symfony\Component\VarDumper\VarDumper;
 
 class CoinCurrencyValidator extends CurrencyValidator
 {
@@ -18,6 +19,7 @@ class CoinCurrencyValidator extends CurrencyValidator
 
     public function validate($value, Constraint $constraint)
     {
+
         if ($this->coinCurrencyCode !== $value) {
             parent::validate($value, $constraint);
         }

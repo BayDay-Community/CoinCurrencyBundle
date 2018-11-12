@@ -28,7 +28,6 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('currency_code')->defaultValue('BDC')->cannotBeEmpty()->end()
                 ->scalarNode('product_code')->defaultValue('COIN')->cannotBeEmpty()->end()
                 ->scalarNode('gateway')->defaultValue('bayday_coin')->cannotBeEmpty()->end()
-                ->scalarNode('validation_group')->defaultValue('BayDayCurrencyCoin')->cannotBeEmpty()->end()
             ->end();
 
         return $treeBuilder;

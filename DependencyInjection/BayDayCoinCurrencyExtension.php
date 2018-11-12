@@ -29,7 +29,6 @@ class BayDayCoinCurrencyExtension extends Extension implements PrependExtensionI
         $container->setParameter('bayday.coin_currency.currency.code', $config['currency_code']);
         $container->setParameter('bayday.coin_currency.product.code', $config['product_code']);
         $container->setParameter('bayday.coin_currency.gateway', $config['gateway']);
-        $container->setParameter('bayday.coin_currency.validation_group', $config['validation_group']);
 
 
     }

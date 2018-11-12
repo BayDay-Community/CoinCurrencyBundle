@@ -24,7 +24,6 @@ class ShopUser extends BaseShopUser
     /**
      * @var int
      * @ORM\Column(type="bigint")
-     * @Assert\GreaterThanOrEqual(value="0", message="bayday.coin_currency.greater_than_zero.message")
      */
     protected $wallet = 0;
 

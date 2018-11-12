@@ -1,7 +1,7 @@
 parameters:
-  sylius.form.type.checkout_address.validation_groups: ["%bayday.coin_currency.validation_group%"]
-  sylius.form.type.checkout_select_payment.validation_groups: ["%bayday.coin_currency.validation_group%"]
-  sylius.form.type.cart.validation_groups: ["%bayday.coin_currency.validation_group%"]
+  sylius.form.type.checkout_address.validation_groups: ["BayDayCurrencyCoin"]
+  sylius.form.type.checkout_select_payment.validation_groups: ["BayDayCurrencyCoin"]
+  sylius.form.type.cart.validation_groups: ["BayDayCurrencyCoin"]
 
 services:
   BayDay\CoinCurrencyBundle\Templating\Helper\CurrencyHelper:
@@ -25,6 +25,10 @@ services:
     tags:
       - {name: form.type, lazy: true}
 
+  BayDay\CoinCurrencyBundle\Validator\WalletFulfilledValidator:
+    tags:
+    - {name: validator.constraint_validator, lazy: true}
+
   BayDay\CoinCurrencyBundle\Validator\CoinCurrencyValidator:
     arguments:
       $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
@@ -45,8 +49,12 @@ services:
     tags:
       - {name: payum.gateway_factory_builder, factory: "%bayday.coin_currency.gateway%", lazy: true }
 
+  BayDay\CoinCurrencyBundle\Calculator\CoinCalculator:
+    arguments:
+      $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
+
   BayDay\CoinCurrencyBundle\Operator\UserWalletOperator:
     public: true
     arguments:
       $shopUserManager: "@sylius.manager.shop_user"
-      $coinProductCode: "%bayday.coin_currency.product.code%"
+      $coinCalculator: '@BayDay\CoinCurrencyBundle\Calculator\CoinCalculator'

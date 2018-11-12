@@ -1,2 +1,5 @@
-bayday.coin_currency.validator.message: Cette devise {{ value }} n'existe pas.
-bayday.coin_currency.greater_than_zero.message: Impossible d'avoir une valeure négative !
+bayday:
+  coin_currency:
+    coin: Cette devise {{ value }} n'existe pas.
+    greater_then_zero: Impossible d'avoir une valeure négative !
+    wallet_fulfilled: Votre porte maonnei n'as pas assez de BayDay Coins

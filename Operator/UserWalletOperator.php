@@ -11,6 +11,7 @@ namespace BayDay\CoinCurrencyBundle\Operator;
 
 
 use BayDay\CoinCurrencyBundle\Entity\ShopUser;
+use BayDay\CoinCurrencyBundle\Calculator\CoinCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
@@ -22,40 +23,21 @@ class UserWalletOperator
     /** @var EntityManagerInterface $entityManager */
     private $shopUserManager;
 
-    /** @var string $coinCurrencyCode */
-    private $coinCurrencyCode;
+    /** @var CoinCalculator $coinCalculator */
+    private $coinCalculator;
 
-    public function __construct(EntityManagerInterface $shopUserManager, $coinProductCode)
+    public function __construct(EntityManagerInterface $shopUserManager, CoinCalculator $coinCalculator)
     {
         $this->shopUserManager = $shopUserManager;
-        $this->coinProductCode = $coinProductCode;
+        $this->coinCalculator = $coinCalculator;
 
-    }
-
-    private function getTotalCoin($order)
-    {
-        $totalCoins = 0;
-
-        /** @var OrderItemInterface $orderItem */
-        foreach ($order->getItems() as $orderItem)
-        {
-            if ($orderItem->getProduct()->getCode() !== $this->coinProductCode)
-            {
-                continue;
-            }
-
-            $totalCoins += $orderItem->getQuantity();
-
-        }
-
-        return $totalCoins;
     }
 
 
     public function pay(OrderInterface $order)
     {
 
-        $totalCoins = $this->getTotalCoin($order);
+        $totalCoins = $this->coinCalculator->getTotalCoinFromOrder($order);
 
         /** @var ShopUser $shopUser */
         $shopUser = $order->getUser();
@@ -72,7 +54,7 @@ class UserWalletOperator
     public function refund(OrderInterface $order)
     {
 
-        $totalCoins = $this->getTotalCoin($order);
+        $totalCoins = $this->coinCalculator->getTotalCoinFromOrder($order);
 
         /** @var ShopUser $shopUser */
         $shopUser = $order->getUser();

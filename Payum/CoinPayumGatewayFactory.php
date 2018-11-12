@@ -20,12 +20,11 @@ class CoinPayumGatewayFactory extends GatewayFactory
     protected function populateConfig(ArrayObject $config)
     {
         $config->defaults([
-            'payum.factory_name' => 'coin',
-            'payum.factory_title' => 'coin',
+            'payum.factory_name' => 'bayday_coin',
+            'payum.factory_title' => 'BayDay Coin',
             'payum.action.capture' => new CaptureAction(),
             'payum.action.refund' => new RefundAction(),
             'payum.action.cancel' => new CancelAction(),
-            'payum.action.notify' => new NotifyAction(),
             'payum.action.status' => new StatusAction(),
         ]);
 
