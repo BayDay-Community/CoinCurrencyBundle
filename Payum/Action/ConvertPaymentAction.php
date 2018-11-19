@@ -2,16 +2,15 @@
 
 namespace BayDay\CoinCurrencyBundle\Payum\Action;
 
+use BayDay\CoinCurrencyBundle\Entity\ShopUser;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Model\PaymentInterface;
 use Payum\Core\Request\Convert;
+use Payum\Core\Bridge\Spl\ArrayObject;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 class ConvertPaymentAction implements ActionInterface
 {
-    use GatewayAwareTrait;
-
     /**
      * {@inheritdoc}
      *
@@ -24,7 +23,18 @@ class ConvertPaymentAction implements ActionInterface
         /** @var PaymentInterface $payment */
         $payment = $request->getSource();
 
-        throw new \LogicException('Not implemented');
+        /** @var ShopUser $user */
+        $user = $payment->getOrder()->getUser();
+
+        $details = ArrayObject::ensureArrayObject($payment->getDetails());
+
+        $details->defaults(array(
+            'shop_user_id' => $user->getId(),
+            'amount' => $payment->getAmount(),
+            'status' => PaymentInterface::STATE_NEW,
+        ));
+
+        $request->setResult((array) $details);
     }
 
     /**

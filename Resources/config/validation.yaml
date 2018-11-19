@@ -5,14 +5,14 @@ BayDay\CoinCurrencyBundle\Entity\ShopUser:
           value: 0
           message: "bayday.coin_currency.greater_than_zero"
 
-Sylius\Component\Core\Model\Payment:
-  constraints:
-    - BayDay\CoinCurrencyBundle\Validator\WalletFulfilled:
-        groups: ["BayDayCurrencyCoin"]
+#Sylius\Component\Core\Model\Payment:
+#  constraints:
+#    - BayDay\CoinCurrencyBundle\Validator\WalletFulfilled:
+#        groups: ["BayDayCurrencyCoin"]
 
 
 Sylius\Component\Core\Model\Order:
   properties:
     currencyCode:
       - BayDay\CoinCurrencyBundle\Validator\CoinCurrency:
-          groups: ["BayDayCurrencyCoin"]
+          groups: ["%bayday.coin_currency.validation_group%"]

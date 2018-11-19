@@ -45,10 +45,11 @@ class CurrencyListener implements EventSubscriber
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
         if (($currency = $eventArgs->getObject()) instanceof Currency) {
-            $currency->setName( Intl::getCurrencyBundle()->getCurrencyName($currency->getCode()) );
+            $currency->setName(Intl::getCurrencyBundle()->getCurrencyName($currency->getCode()));
 
-            if ($currency->getCode() === $this->coinCurrencyCode)
+            if ($currency->getCode() === $this->coinCurrencyCode) {
                 $currency->setName($this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle'));
+            }
         }
     }
 }

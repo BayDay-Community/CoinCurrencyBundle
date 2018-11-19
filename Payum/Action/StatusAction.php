@@ -6,26 +6,46 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Request\GetStatusInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
-use Sylius\Bundle\PayumBundle\Request\GetStatus;
-use Sylius\Component\Payment\Model\Payment;
+use Sylius\Component\Core\Model\PaymentInterface;
 
 class StatusAction implements ActionInterface
 {
     /**
      * {@inheritdoc}
      *
-     * @param GetStatus $request
+     * @param GetStatusInterface $request
      */
     public function execute($request)
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
-        /** @var Payment $payment */
-        $payment = $request->getFirstModel();
-
         $model = ArrayObject::ensureArrayObject($request->getModel());
 
-        throw new \LogicException('Not implemented');
+        if (PaymentInterface::STATE_NEW === $model['status']) {
+            $request->markNew();
+
+            return;
+        }
+
+        if (PaymentInterface::STATE_FAILED === $model['status']) {
+            $request->markFailed();
+
+            return;
+        }
+
+        if (PaymentInterface::STATE_COMPLETED === $model['status']) {
+            $request->markCaptured();
+
+            return;
+        }
+
+        if (PaymentInterface::STATE_REFUNDED === $model['status']) {
+            $request->markRefunded();
+
+            return;
+        }
+
+        $request->markUnknown();
     }
 
     /**

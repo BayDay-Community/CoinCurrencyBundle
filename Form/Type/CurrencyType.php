@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace BayDay\CoinCurrencyBundle\Form\Type;
 
 use Sylius\Bundle\ResourceBundle\Form\EventSubscriber\AddCodeFormSubscriber;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\IntlCallbackChoiceLoader;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -21,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\CurrencyType as SymfonyCurrencyTy
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class CurrencyType implements FormTypeInterface
+class CurrencyType extends AbstractType
 {
     /** @var FormTypeInterface $decoratedForm */
     private $decoratedForm;
@@ -29,10 +30,14 @@ class CurrencyType implements FormTypeInterface
     /** @var Translator $translator */
     private $translator;
 
-    public function __construct(FormTypeInterface $decoratedForm, TranslatorInterface $translator)
+    /** @var string $coinCurrencyCode */
+    private $coinCurrencyCode;
+
+    public function __construct(FormTypeInterface $decoratedForm, TranslatorInterface $translator, $coinCurrencyCode)
     {
         $this->decoratedForm = $decoratedForm;
         $this->translator = $translator;
+        $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -72,10 +77,10 @@ class CurrencyType implements FormTypeInterface
             ->addEventSubscriber(new AddCodeFormSubscriber(SymfonyCurrencyType::class, [
                 'label' => 'sylius.form.currency.code',
                 'choice_loader' => new IntlCallbackChoiceLoader(function () use ($options) {
-                    $locale = isset($options['choice_translation_locale']) ? $options['choice_translation_locale'] : $this->translator->getLocale();
+                    $locale = $options['choice_translation_locale'] ?: $this->translator->getLocale();
                     $currencies = array_flip(
                         array_merge(
-                            $this->getVirtualCurrencies($locale),
+                            [$this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale)],
                             Intl::getCurrencyBundle()->getCurrencyNames($locale)
                         )
                     );
@@ -87,16 +92,5 @@ class CurrencyType implements FormTypeInterface
                 'choice_translation_locale' => null,
             ]))
         ;
-    }
-
-    /**
-     * @param $locale
-     *
-     * @return array
-     */
-    private function getVirtualCurrencies($locale)
-    {
-
-        return array($this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale));
     }
 }

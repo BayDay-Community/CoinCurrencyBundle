@@ -1,0 +1,4 @@
+bayday:
+  coin_currency:
+    payum_gateway:
+      label: Pay with Coins

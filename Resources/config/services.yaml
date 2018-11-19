@@ -1,8 +1,3 @@
-parameters:
-  sylius.form.type.checkout_address.validation_groups: ["BayDayCurrencyCoin"]
-  sylius.form.type.checkout_select_payment.validation_groups: ["BayDayCurrencyCoin"]
-  sylius.form.type.cart.validation_groups: ["BayDayCurrencyCoin"]
-
 services:
   BayDay\CoinCurrencyBundle\Templating\Helper\CurrencyHelper:
     decorates: sylius.templating.helper.currency
@@ -22,8 +17,26 @@ services:
     arguments:
       $decoratedForm:  '@BayDay\CoinCurrencyBundle\Form\Type\CurrencyType.inner'
       $translator: "@translator"
+      $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
     tags:
       - {name: form.type, lazy: true}
+
+  BayDay\CoinCurrencyBundle\Form\Type\CoinGatewayConfigurationType:
+    tags:
+      - {name: form.type, lazy: true}
+      - {name: sylius.gateway_configuration_type, type: "%bayday.coin_currency.gateway%", label: bayday.coin_currency.payum_gateway.coin_checkout }
+
+  BayDay\CoinCurrencyBundle\Payum\Action\CapturePaymentAction:
+    decorates: sylius.payum_action.capture_payment
+    arguments:
+      $decoratedAction: '@BayDay\CoinCurrencyBundle\Payum\Action\CapturePaymentAction.inner'
+
+  BayDay\CoinCurrencyBundle\Payum\Action\CaptureAction:
+    public: true
+    arguments:
+      $entityManager: '@doctrine.orm.default_entity_manager'
+    tags:
+      - { name: payum.action, factory: "%bayday.coin_currency.gateway%", gateway: "%bayday.coin_currency.gateway%" }
 
   BayDay\CoinCurrencyBundle\Validator\WalletFulfilledValidator:
     tags:
@@ -34,7 +47,6 @@ services:
       $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
     tags:
       - {name: validator.constraint_validator, lazy: true}
-
 
   BayDay\CoinCurrencyBundle\EventListener\CurrencyListener:
     arguments:
@@ -51,7 +63,7 @@ services:
 
   BayDay\CoinCurrencyBundle\Calculator\CoinCalculator:
     arguments:
-      $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
+      $coinProductCode: "%bayday.coin_currency.product.code%"
 
   BayDay\CoinCurrencyBundle\Operator\UserWalletOperator:
     public: true

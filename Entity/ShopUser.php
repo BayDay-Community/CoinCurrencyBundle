@@ -11,7 +11,6 @@ namespace BayDay\CoinCurrencyBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Core\Model\ShopUser as BaseShopUser;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class ShopUser.
@@ -32,7 +31,7 @@ class ShopUser extends BaseShopUser
      */
     public function getWallet()
     {
-        return intval($this->wallet);
+        return (int) $this->wallet;
     }
 
     /**

@@ -29,7 +29,7 @@ class CurrencyNameConverter implements CurrencyNameConverterInterface
      *
      * @param CurrencyNameConverterInterface $decoratedConverter
      * @param TranslatorInterface            $translator
-     * @param string $coinCurrencyCode
+     * @param string                         $coinCurrencyCode
      */
     public function __construct(CurrencyNameConverterInterface $decoratedConverter, TranslatorInterface $translator, $coinCurrencyCode)
     {
@@ -43,7 +43,7 @@ class CurrencyNameConverter implements CurrencyNameConverterInterface
         try {
             $currencyCode = $this->decoratedConverter->convertToCode($name, $locale);
         } catch (\InvalidArgumentException $e) {
-            if ($this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale) !== $name ) {
+            if ($this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale) !== $name) {
                 throw new \InvalidArgumentException(sprintf('Currency "%s" not found!', $name));
             }
 
