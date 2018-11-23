@@ -77,10 +77,10 @@ class CurrencyType extends AbstractType
             ->addEventSubscriber(new AddCodeFormSubscriber(SymfonyCurrencyType::class, [
                 'label' => 'sylius.form.currency.code',
                 'choice_loader' => new IntlCallbackChoiceLoader(function () use ($options) {
-                    $locale = $options['choice_translation_locale'] ?: $this->translator->getLocale();
+                    $locale = $options['choice_translation_locale'] ?? $this->translator->getLocale();
                     $currencies = array_flip(
                         array_merge(
-                            [$this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale)],
+                            [ $this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale) ],
                             Intl::getCurrencyBundle()->getCurrencyNames($locale)
                         )
                     );
