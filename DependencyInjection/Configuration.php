@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('bayday_coin_currency');
+        $rootNode = $treeBuilder->root('bay_day_coin_currency');
 
         $rootNode
             ->children()
