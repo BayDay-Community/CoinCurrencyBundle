@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 2:46 PM.
  */
 
-namespace BayDay\CoinCurrencyBundle\Entity;
+namespace BayDay\CoinCurrencyBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Core\Model\ShopUser as BaseShopUser;
@@ -15,7 +15,7 @@ use Sylius\Component\Core\Model\ShopUser as BaseShopUser;
 /**
  * Class ShopUser.
  *
- * @ORM\Entity
+ * @ORM\MappedSuperclass()
  * @ORM\Table(name="sylius_shop_user")
  */
 class ShopUser extends BaseShopUser

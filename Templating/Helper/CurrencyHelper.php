@@ -27,6 +27,6 @@ class CurrencyHelper implements CurrencyHelperInterface
 
     public function convertCurrencyCodeToSymbol(string $code): string
     {
-        return $code===$this->coinCurrencyCode ? $this->coinCurrencyCode : $this->decoratedHelper->convertCurrencyCodeToSymbol($code);
+        return $this->decoratedHelper->convertCurrencyCodeToSymbol($code) ?: $this->coinCurrencyCode;
     }
 }

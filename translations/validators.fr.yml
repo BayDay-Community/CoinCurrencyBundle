@@ -1,0 +1,5 @@
+bayday:
+  coin_currency:
+    coin: Cette devise {{ value }} n'existe pas.
+    greater_then_zero: Impossible d'avoir une valeure négative !
+    wallet_fulfilled: Votre porte monnaie n'as pas assez de BayDay Coins

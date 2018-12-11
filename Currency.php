@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 6:09 PM.
  */
 
-namespace BayDay\CoinCurrencyBundle\Entity;
+namespace BayDay\CoinCurrencyBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Sylius\Component\Currency\Model\Currency as BaseCurrency;
@@ -15,7 +15,7 @@ use Sylius\Component\Currency\Model\Currency as BaseCurrency;
 /**
  * Class Currency.
  *
- * @ORM\Entity
+ * @ORM\MappedSuperclass()
  * @ORM\Table(name="sylius_currency")
  */
 class Currency extends BaseCurrency

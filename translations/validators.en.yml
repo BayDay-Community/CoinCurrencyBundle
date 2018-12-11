@@ -1,0 +1,5 @@
+bayday:
+  coin_currency:
+    coin: The value {{ value }} is not valid.
+    greater_then_zero: Not possible having a below zero value.
+    wallet_fulfilled: Your wallet is not fulfilled enough.
