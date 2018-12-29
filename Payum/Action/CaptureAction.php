@@ -2,7 +2,6 @@
 
 namespace BayDay\CoinCurrencyBundle\Payum\Action;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;

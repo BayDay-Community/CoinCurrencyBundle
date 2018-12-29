@@ -11,10 +11,12 @@ namespace BayDay\CoinCurrencyBundle\Operator;
 
 use BayDay\CoinCurrencyBundle\Model\Customer;
 use Doctrine\Common\Collections\Collection;
+use SM\Factory\FactoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Core\Model\PaymentInterface;
+use Sylius\Component\Payment\PaymentTransitions;
 
 /**
  * Class UserWalletOperator.
@@ -27,15 +29,20 @@ class UserWalletOperator
     /** @var string $coinProductCode */
     private $coinProductCode;
 
+    /** @var FactoryInterface */
+    private $stateMachineFactory;
+
     /**
      * UserWalletOperator constructor.
      *
      * @param EntityManagerInterface $customerManager
-     * @param string                 $coinProductCode
+     * @param FactoryInterface $stateMachineFactory
+     * @param string $coinProductCode
      */
-    public function __construct(EntityManagerInterface $customerManager, string $coinProductCode)
+    public function __construct(EntityManagerInterface $customerManager, FactoryInterface $stateMachineFactory, string $coinProductCode)
     {
         $this->customerManager = $customerManager;
+        $this->stateMachineFactory = $stateMachineFactory;
         $this->coinProductCode = $coinProductCode;
     }
 
@@ -93,7 +100,9 @@ class UserWalletOperator
         $customer->setWallet($customer->getWallet() - $payment->getAmount());
         $details['status'] = PaymentInterface::STATE_COMPLETED;
         $payment->setDetails($details);
-        $payment->setState(PaymentInterface::STATE_COMPLETED);
+
+        $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+        $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
     }
 
     /**
@@ -102,5 +111,14 @@ class UserWalletOperator
     public function refundPayment(PaymentInterface $payment): void
     {
         $details = $payment->getDetails();
+
+        /** @var Customer $customer */
+        $customer = $payment->getOrder()->getCustomer();
+        $customer->setWallet($customer->getWallet() + $payment->getAmount());
+        $details['status'] = PaymentInterface::STATE_REFUNDED;
+        $payment->setDetails($details);
+
+        $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+        $stateMachine->apply(PaymentTransitions::TRANSITION_REFUND);
     }
 }

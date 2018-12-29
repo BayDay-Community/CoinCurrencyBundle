@@ -65,4 +65,6 @@ services:
     public: true
     arguments:
       $customerManager: '@sylius.manager.customer'
+      $stateMachineFactory: "@sm.factory"
       $coinProductCode: "%bayday.coin_currency.product.code%"
+
