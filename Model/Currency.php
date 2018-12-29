@@ -15,12 +15,12 @@ use Sylius\Component\Currency\Model\Currency as BaseCurrency;
 /**
  * Class Currency.
  *
- * @ORM\MappedSuperclass()
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="sylius_currency")
  */
 class Currency extends BaseCurrency
 {
-    /** @var string $name */
+    /** @var string|null $name */
     private $name;
 
     /**

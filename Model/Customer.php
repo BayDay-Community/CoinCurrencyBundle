@@ -10,26 +10,28 @@ declare(strict_types=1);
 namespace BayDay\CoinCurrencyBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sylius\Component\Core\Model\ShopUser as BaseShopUser;
+use Sylius\Component\Core\Model\Customer as BaseCustomer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class ShopUser.
+ * Class Customer.
  *
- * @ORM\MappedSuperclass()
- * @ORM\Table(name="sylius_shop_user")
+ * @ORM\MappedSuperclass
+ * @ORM\Table(name="sylius_customer")
  */
-class ShopUser extends BaseShopUser
+class Customer extends BaseCustomer
 {
     /**
      * @var int
      * @ORM\Column(type="bigint")
+     * @Assert\GreaterThanOrEqual(value="0", message="bayday.coin_currency.greater_than_zero")
      */
     protected $wallet = 0;
 
     /**
      * @return int
      */
-    public function getWallet()
+    public function getWallet(): int
     {
         return (int) $this->wallet;
     }
@@ -37,9 +39,9 @@ class ShopUser extends BaseShopUser
     /**
      * @param int $wallet
      *
-     * @return ShopUser
+     * @return Customer
      */
-    public function setWallet(int $wallet): ShopUser
+    public function setWallet(int $wallet): Customer
     {
         $this->wallet = $wallet;
 

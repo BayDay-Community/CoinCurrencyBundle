@@ -11,6 +11,9 @@ namespace BayDay\CoinCurrencyBundle\Builder;
 
 use Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder as BaseGatewayFactoryBuilder;
 
+/**
+ * Class GatewayFactoryBuilder.
+ */
 class GatewayFactoryBuilder extends BaseGatewayFactoryBuilder
 {
 }

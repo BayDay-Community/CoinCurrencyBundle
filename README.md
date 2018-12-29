@@ -1,12 +1,11 @@
-sylius_user:
-    resources:
-        shop:
-            user:
-                classes:
-                    model: BayDay\CoinCurrencyBundle\Entity\ShopUser
+sylius_customer:
+  resources:
+    customer:
+      classes:
+        model: BayDay\CoinCurrencyBundle\Model\Customer
 
 sylius_currency:
     resources:
         currency:
             classes:
-                model: BayDay\CoinCurrencyBundle\Entity\Currency
+                model: BayDay\CoinCurrencyBundle\Model\Currency

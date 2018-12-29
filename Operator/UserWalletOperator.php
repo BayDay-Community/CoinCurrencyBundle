@@ -9,56 +9,98 @@ declare(strict_types=1);
 
 namespace BayDay\CoinCurrencyBundle\Operator;
 
-use BayDay\CoinCurrencyBundle\Entity\ShopUser;
-use BayDay\CoinCurrencyBundle\Calculator\CoinCalculator;
+use BayDay\CoinCurrencyBundle\Model\Customer;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Core\Model\OrderInterface;
+use Sylius\Component\Core\Model\OrderItemInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
 
+/**
+ * Class UserWalletOperator.
+ */
 class UserWalletOperator
 {
-    /** @var EntityManagerInterface $entityManager */
-    private $shopUserManager;
+    /** @var EntityManagerInterface $customerManager */
+    private $customerManager;
 
-    /** @var CoinCalculator $coinCalculator */
-    private $coinCalculator;
+    /** @var string $coinProductCode */
+    private $coinProductCode;
 
-    public function __construct(EntityManagerInterface $shopUserManager, CoinCalculator $coinCalculator)
+    /**
+     * UserWalletOperator constructor.
+     *
+     * @param EntityManagerInterface $customerManager
+     * @param string                 $coinProductCode
+     */
+    public function __construct(EntityManagerInterface $customerManager, string $coinProductCode)
     {
-        $this->shopUserManager = $shopUserManager;
-        $this->coinCalculator = $coinCalculator;
+        $this->customerManager = $customerManager;
+        $this->coinProductCode = $coinProductCode;
     }
 
-    public function pay(OrderInterface $order)
+    /**
+     * @param OrderInterface $order
+     *
+     * @return Collection
+     */
+    private function getCoinOrderItems(OrderInterface $order): Collection
     {
-        $totalCoins = $this->coinCalculator->getTotalCoinFromOrder($order);
-
-        if ($totalCoins) {
-            /** @var ShopUser $shopUser */
-            $shopUser = $order->getUser();
-            if (!$shopUser instanceof ShopUser) {
-                throw new \RuntimeException('Pls extends '.\get_class($order).' with '.ShopUser::class);
-            }
-
-            $shopUser->setWallet($shopUser->getWallet() + $totalCoins);
-            $this->shopUserManager->persist($shopUser);
-            $this->shopUserManager->flush();
-        }
+        return $order->getItems()->filter(function (OrderItemInterface $orderItem) {
+            return $orderItem->getProduct()->getCode() === $this->coinProductCode;
+        });
     }
 
-    public function refund(OrderInterface $order)
+    /**
+     * @param OrderInterface $order
+     */
+    public function payOrder(OrderInterface $order): void
     {
-        $totalCoins = $this->coinCalculator->getTotalCoinFromOrder($order);
-
-        if ($totalCoins) {
-            /** @var ShopUser $shopUser */
-            $shopUser = $order->getUser();
-            if (!$shopUser instanceof ShopUser) {
-                throw new \RuntimeException('Pls extends '.\get_class($order).' with '.ShopUser::class);
-            }
-
-            $shopUser->setWallet($shopUser->getWallet() - $totalCoins);
-            $this->shopUserManager->persist($shopUser);
-            $this->shopUserManager->flush();
+        $coinOrderItems = $this->getCoinOrderItems($order);
+        /** @var Customer $customer */
+        $customer = $order->getCustomer();
+        foreach ($coinOrderItems as $coinOrderItem) {
+            $customer->setWallet($customer->getWallet() + $coinOrderItem->getQuantity());
         }
+        $this->customerManager->persist($customer);
+        $this->customerManager->flush();
+    }
+
+    /**
+     * @param OrderInterface $order
+     */
+    public function refundOrder(OrderInterface $order): void
+    {
+        $coinOrderItems = $this->getCoinOrderItems($order);
+        /** @var Customer $customer */
+        $customer = $order->getCustomer();
+        foreach ($coinOrderItems as $coinOrderItem) {
+            $customer->setWallet($customer->getWallet() - $coinOrderItem->getQuantity());
+        }
+        $this->customerManager->persist($customer);
+        $this->customerManager->flush();
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     */
+    public function authorizePayment(PaymentInterface $payment): void
+    {
+        $details = $payment->getDetails();
+
+        /** @var Customer $customer */
+        $customer = $payment->getOrder()->getCustomer();
+        $customer->setWallet($customer->getWallet() - $payment->getAmount());
+        $details['status'] = PaymentInterface::STATE_COMPLETED;
+        $payment->setDetails($details);
+        $payment->setState(PaymentInterface::STATE_COMPLETED);
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     */
+    public function refundPayment(PaymentInterface $payment): void
+    {
+        $details = $payment->getDetails();
     }
 }

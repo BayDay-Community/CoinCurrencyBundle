@@ -10,9 +10,12 @@ declare(strict_types=1);
 namespace BayDay\CoinCurrencyBundle\Converter;
 
 use Sylius\Component\Currency\Converter\CurrencyNameConverterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Translation\Translator;
 
+/**
+ * Class CurrencyNameConverter.
+ */
 class CurrencyNameConverter implements CurrencyNameConverterInterface
 {
     /** @var CurrencyNameConverterInterface $decoratedConverter */
@@ -38,6 +41,12 @@ class CurrencyNameConverter implements CurrencyNameConverterInterface
         $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
+    /**
+     * @param string      $name
+     * @param string|null $locale
+     *
+     * @return string
+     */
     public function convertToCode(string $name, ?string $locale = null): string
     {
         try {

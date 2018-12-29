@@ -7,16 +7,26 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Capture;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\PaymentInterface;
-use BayDay\CoinCurrencyBundle\Entity\ShopUser;
+use BayDay\CoinCurrencyBundle\Model\Customer;
 
+/**
+ * Class CaptureAction.
+ */
 class CaptureAction implements ActionInterface
 {
-    protected $entityManager;
+    /** @var EntityRepository $shopUserRepository */
+    private $customerRepository;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    /**
+     * CaptureAction constructor.
+     *
+     * @param EntityRepository $customerRepository
+     */
+    public function __construct(EntityRepository $customerRepository)
     {
-        $this->entityManager = $entityManager;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -24,20 +34,17 @@ class CaptureAction implements ActionInterface
      *
      * @param Capture $request
      */
-    public function execute($request)
+    public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
         $model = ArrayObject::ensureArrayObject($request->getModel());
+        $model['status'] = PaymentInterface::STATE_FAILED;
 
-        try {
-            /** @var ShopUser $shopUser */
-            $shopUser = $this->entityManager->getRepository(ShopUser::class)->find($model['shop_user_id']);
-            $shopUser->setWallet($shopUser->getWallet() - $model['amount']);
-            $this->entityManager->persist($shopUser);
-            $model['status'] = PaymentInterface::STATE_COMPLETED;
-        } catch (\Exception $e) {
-            $model['status'] = PaymentInterface::STATE_FAILED;
+        /** @var Customer $customer */
+        $customer = $this->customerRepository->find($model['customer_id']);
+        if ($customer->getWallet() >= (int) $model['amount']) {
+            $model['status'] = PaymentInterface::STATE_AUTHORIZED;
         }
 
         $model->replace((array) $model);
@@ -46,7 +53,7 @@ class CaptureAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($request)
+    public function supports($request): bool
     {
         return
             $request instanceof Capture &&

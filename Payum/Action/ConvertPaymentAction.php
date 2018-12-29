@@ -2,13 +2,16 @@
 
 namespace BayDay\CoinCurrencyBundle\Payum\Action;
 
-use BayDay\CoinCurrencyBundle\Entity\ShopUser;
+use BayDay\CoinCurrencyBundle\Model\Customer;
 use Payum\Core\Action\ActionInterface;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Convert;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Sylius\Component\Core\Model\PaymentInterface;
 
+/**
+ * Class ConvertPaymentAction.
+ */
 class ConvertPaymentAction implements ActionInterface
 {
     /**
@@ -16,20 +19,20 @@ class ConvertPaymentAction implements ActionInterface
      *
      * @param Convert $request
      */
-    public function execute($request)
+    public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
         /** @var PaymentInterface $payment */
         $payment = $request->getSource();
 
-        /** @var ShopUser $user */
-        $user = $payment->getOrder()->getUser();
+        /** @var Customer $user */
+        $customer = $payment->getOrder()->getCustomer();
 
         $details = ArrayObject::ensureArrayObject($payment->getDetails());
 
         $details->defaults(array(
-            'shop_user_id' => $user->getId(),
+            'customer_id' => $customer->getId(),
             'amount' => $payment->getAmount(),
             'status' => PaymentInterface::STATE_NEW,
         ));
@@ -40,7 +43,7 @@ class ConvertPaymentAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($request)
+    public function supports($request): bool
     {
         return
             $request instanceof Convert &&

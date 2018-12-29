@@ -9,12 +9,15 @@ use BayDay\CoinCurrencyBundle\Payum\Action\StatusAction;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
 
+/**
+ * Class CoinPayumGatewayFactory.
+ */
 class CoinPayumGatewayFactory extends GatewayFactory
 {
     /**
      * {@inheritdoc}
      */
-    protected function populateConfig(ArrayObject $config)
+    protected function populateConfig(ArrayObject $config): void
     {
         $config->defaults([
             'payum.factory_name' => 'bayday_coin',

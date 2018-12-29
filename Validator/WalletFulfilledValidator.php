@@ -9,17 +9,25 @@ declare(strict_types=1);
 
 namespace BayDay\CoinCurrencyBundle\Validator;
 
-use BayDay\CoinCurrencyBundle\Entity\ShopUser;
+use BayDay\CoinCurrencyBundle\Model\Customer;
+use Sylius\Component\Core\Model\PaymentInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Class WalletFulfilledValidator.
+ */
 class WalletFulfilledValidator extends ConstraintValidator
 {
-    public function validate($payment, Constraint $constraint)
+    /**
+     * @param PaymentInterface $payment
+     * @param Constraint       $constraint
+     */
+    public function validate($payment, Constraint $constraint): void
     {
-        $user = $payment->getOrder()->getUser();
-        if ($user instanceof ShopUser &&
-            $user->getWallet() < $payment->getAmount()) {
+        $customer = $payment->getOrder()->getCustomer();
+        if ($customer instanceof Customer &&
+            $customer->getWallet() < $payment->getAmount()) {
             $this->context->buildViolation($constraint->message)
                 ->setCode(false)
                 ->addViolation();

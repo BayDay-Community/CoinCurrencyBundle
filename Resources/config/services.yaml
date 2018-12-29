@@ -34,7 +34,7 @@ services:
   BayDay\CoinCurrencyBundle\Payum\Action\CaptureAction:
     public: true
     arguments:
-      $entityManager: '@doctrine.orm.default_entity_manager'
+      $customerRepository: '@sylius.repository.customer'
     tags:
       - { name: payum.action, factory: "%bayday.coin_currency.gateway%", gateway: "%bayday.coin_currency.gateway%" }
 
@@ -61,12 +61,8 @@ services:
     tags:
       - {name: payum.gateway_factory_builder, factory: "%bayday.coin_currency.gateway%", lazy: true }
 
-  BayDay\CoinCurrencyBundle\Calculator\CoinCalculator:
-    arguments:
-      $coinProductCode: "%bayday.coin_currency.product.code%"
-
   BayDay\CoinCurrencyBundle\Operator\UserWalletOperator:
     public: true
     arguments:
-      $shopUserManager: "@sylius.manager.shop_user"
-      $coinCalculator: '@BayDay\CoinCurrencyBundle\Calculator\CoinCalculator'
+      $customerManager: '@sylius.manager.customer'
+      $coinProductCode: "%bayday.coin_currency.product.code%"

@@ -11,6 +11,9 @@ namespace BayDay\CoinCurrencyBundle\Templating\Helper;
 
 use Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface;
 
+/**
+ * Class CurrencyHelper.
+ */
 class CurrencyHelper implements CurrencyHelperInterface
 {
     /** @var CurrencyHelperInterface */
@@ -19,12 +22,23 @@ class CurrencyHelper implements CurrencyHelperInterface
     /** @var string $coinCurrencyCode */
     private $coinCurrencyCode;
 
+    /**
+     * CurrencyHelper constructor.
+     *
+     * @param CurrencyHelperInterface $decoratedHelper
+     * @param $coinCurrencyCode
+     */
     public function __construct(CurrencyHelperInterface $decoratedHelper, $coinCurrencyCode)
     {
         $this->decoratedHelper = $decoratedHelper;
         $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
+    /**
+     * @param string $code
+     *
+     * @return string
+     */
     public function convertCurrencyCodeToSymbol(string $code): string
     {
         return $this->decoratedHelper->convertCurrencyCodeToSymbol($code) ?: $this->coinCurrencyCode;

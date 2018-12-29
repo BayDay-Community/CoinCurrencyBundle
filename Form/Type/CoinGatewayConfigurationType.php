@@ -11,6 +11,9 @@ namespace BayDay\CoinCurrencyBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 
+/**
+ * Class CoinGatewayConfigurationType.
+ */
 class CoinGatewayConfigurationType extends AbstractType
 {
 }

@@ -11,12 +11,21 @@ namespace BayDay\CoinCurrencyBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Class WalletFulfilled.
+ */
 class WalletFulfilled extends Constraint
 {
-    public function getTargets()
+    /**
+     * @return array|string
+     */
+    public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;
     }
 
+    /**
+     * @var string
+     */
     public $message = 'bayday.coin_currency.wallet_fulfilled';
 }

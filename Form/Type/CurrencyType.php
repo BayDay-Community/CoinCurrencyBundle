@@ -20,8 +20,11 @@ use Symfony\Component\Intl\Intl;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CurrencyType as SymfonyCurrencyType;
 use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class CurrencyType.
+ */
 class CurrencyType extends AbstractType
 {
     /** @var FormTypeInterface $decoratedForm */
@@ -33,6 +36,13 @@ class CurrencyType extends AbstractType
     /** @var string $coinCurrencyCode */
     private $coinCurrencyCode;
 
+    /**
+     * CurrencyType constructor.
+     *
+     * @param FormTypeInterface   $decoratedForm
+     * @param TranslatorInterface $translator
+     * @param $coinCurrencyCode
+     */
     public function __construct(FormTypeInterface $decoratedForm, TranslatorInterface $translator, $coinCurrencyCode)
     {
         $this->decoratedForm = $decoratedForm;
@@ -40,22 +50,38 @@ class CurrencyType extends AbstractType
         $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    /**
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        return $this->decoratedForm->buildView($view, $form, $options);
+        $this->decoratedForm->buildView($view, $form, $options);
     }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    /**
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        return $this->decoratedForm->finishView($view, $form, $options);
+        $this->decoratedForm->finishView($view, $form, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        return $this->decoratedForm->configureOptions($resolver);
+        $this->decoratedForm->configureOptions($resolver);
     }
 
-    public function getParent()
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent(): string
     {
         return $this->decoratedForm->getParent();
     }
@@ -80,7 +106,7 @@ class CurrencyType extends AbstractType
                     $locale = $options['choice_translation_locale'] ?? $this->translator->getLocale();
                     $currencies = array_flip(
                         array_merge(
-                            [ $this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale) ],
+                            [$this->coinCurrencyCode => $this->translator->trans('bayday.coin_currency.name', [], 'BayDayCoinCurrencyBundle', $locale)],
                             Intl::getCurrencyBundle()->getCurrencyNames($locale)
                         )
                     );

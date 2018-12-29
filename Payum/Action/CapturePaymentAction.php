@@ -12,6 +12,9 @@ use Payum\Core\Request\Convert;
 use Sylius\Bundle\PayumBundle\Request\GetStatus;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
 
+/**
+ * Class CapturePaymentAction.
+ */
 class CapturePaymentAction implements ActionInterface, GatewayAwareInterface
 {
     use GatewayAwareTrait;
@@ -19,6 +22,11 @@ class CapturePaymentAction implements ActionInterface, GatewayAwareInterface
     /** @var ActionInterface $decoratedAction */
     protected $decoratedAction;
 
+    /**
+     * CapturePaymentAction constructor.
+     *
+     * @param ActionInterface $decoratedAction
+     */
     public function __construct(ActionInterface $decoratedAction)
     {
         $this->decoratedAction = $decoratedAction;
@@ -29,7 +37,7 @@ class CapturePaymentAction implements ActionInterface, GatewayAwareInterface
      *
      * @param Capture $request
      */
-    public function execute($request)
+    public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 

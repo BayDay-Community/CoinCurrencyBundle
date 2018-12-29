@@ -15,7 +15,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Sylius\Component\Currency\Model\Currency;
 use Symfony\Component\Intl\Intl;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Translation\Translator;
 
 /**
@@ -30,19 +30,24 @@ class CurrencyListener implements EventSubscriber
     private $coinCurrencyCode;
 
     /** {@inheritdoc} */
-    public function getSubscribedEvents()
+    public function getSubscribedEvents(): array
     {
         return [Events::postLoad];
     }
 
-    public function __construct(TranslatorInterface $translator, $coinCurrencyCode)
+    /**
+     * CurrencyListener constructor.
+     * @param TranslatorInterface $translator
+     * @param $coinCurrencyCode
+     */
+    public function __construct(TranslatorInterface $translator, string $coinCurrencyCode)
     {
         $this->translator = $translator;
         $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
     /** {@inheritdoc} */
-    public function postLoad(LifecycleEventArgs $eventArgs)
+    public function postLoad(LifecycleEventArgs $eventArgs): void
     {
         if (($currency = $eventArgs->getObject()) instanceof Currency) {
             $currency->setName(Intl::getCurrencyBundle()->getCurrencyName($currency->getCode()));

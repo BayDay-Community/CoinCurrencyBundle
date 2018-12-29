@@ -7,6 +7,9 @@ use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Refund;
 
+/**
+ * Class RefundAction.
+ */
 class RefundAction implements ActionInterface
 {
     /**
@@ -14,7 +17,7 @@ class RefundAction implements ActionInterface
      *
      * @param Refund $request
      */
-    public function execute($request)
+    public function execute($request): void
     {
         RequestNotSupportedException::assertSupports($this, $request);
 
@@ -26,7 +29,7 @@ class RefundAction implements ActionInterface
     /**
      * {@inheritdoc}
      */
-    public function supports($request)
+    public function supports($request): bool
     {
         return
             $request instanceof Refund &&

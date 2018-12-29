@@ -18,7 +18,7 @@ class BayDayCoinCurrencyExtension extends Extension implements PrependExtensionI
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
@@ -34,26 +34,42 @@ class BayDayCoinCurrencyExtension extends Extension implements PrependExtensionI
         $container->setParameter('sylius.form.type.checkout_select_payment.validation_groups', array($config['validation_group']));
     }
 
+    /**
+     * @param ContainerBuilder $container
+     */
     public function prepend(ContainerBuilder $container): void
     {
         $configs = $container->getExtensionConfig('winzou_state_machine');
+        $sylius_order_payment = [];
+        $sylius_payment = [];
         foreach ($configs as $config) {
-            if (!isset($config['sylius_order_payment'])) {
+            if (isset($config['sylius_order_payment'])) {
+                $sylius_order_payment = $config['sylius_order_payment'];
                 continue;
             }
 
-            foreach ($config['sylius_order_payment'] as $key => $param) {
-                $state_machine[$key] = $param;
+            if (isset($config['sylius_payment'])) {
+                $sylius_payment = $config['sylius_payment'];
+                continue;
             }
         }
-        $state_machine['callbacks']['after']['bayday_manage_currency_paid'] = ['on' => ['pay'],
-                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'pay'],
+        $sylius_order_payment['callbacks']['after']['bayday_manage_currency_paid'] = ['on' => ['pay'],
+                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'payOrder'],
                                                                                 'args' => ['object'],
                                                                                 ];
-        $state_machine['callbacks']['after']['bayday_manage_currency_refund'] = ['on' => ['refund'],
-                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'refund'],
+        $sylius_order_payment['callbacks']['after']['bayday_manage_currency_refund'] = ['on' => ['refund'],
+                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'refundOrder'],
                                                                                 'args' => ['object'],
                                                                             ];
-        $container->prependExtensionConfig('winzou_state_machine', ['sylius_order_payment' => $state_machine]);
+
+        $sylius_payment['callbacks']['after']['bayday_currency_payment_pay'] = ['on' => ['authorize'],
+                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'authorizePayment'],
+                                                                                'args' => ['object'],
+                                                                        ];
+        $sylius_payment['callbacks']['after']['bayday_currency_payment_refund'] = ['on' => ['refund'],
+                                                                                'do' => ['@BayDay\CoinCurrencyBundle\Operator\UserWalletOperator', 'refundPayment'],
+                                                                                'args' => ['object'],
+                                                                        ];
+        $container->prependExtensionConfig('winzou_state_machine', ['sylius_order_payment' => $sylius_order_payment, 'sylius_payment' => $sylius_payment]);
     }
 }

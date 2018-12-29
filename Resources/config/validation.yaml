@@ -1,15 +1,9 @@
-BayDay\CoinCurrencyBundle\Entity\ShopUser:
+BayDay\CoinCurrencyBundle\Model\Customer:
   properties:
     wallet:
       - GreaterThanOrEqual:
           value: 0
           message: "bayday.coin_currency.greater_than_zero"
-
-#Sylius\Component\Core\Model\Payment:
-#  constraints:
-#    - BayDay\CoinCurrencyBundle\Validator\WalletFulfilled:
-#        groups: ["BayDayCurrencyCoin"]
-
 
 Sylius\Component\Core\Model\Order:
   properties:
