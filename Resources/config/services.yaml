@@ -67,4 +67,5 @@ services:
       $customerManager: '@sylius.manager.customer'
       $stateMachineFactory: "@sm.factory"
       $coinProductCode: "%bayday.coin_currency.product.code%"
+      $coinCurrencyCode: "%bayday.coin_currency.currency.code%"
 

@@ -29,6 +29,9 @@ class UserWalletOperator
     /** @var string $coinProductCode */
     private $coinProductCode;
 
+    /** @var string $coinCurrencyCode */
+    private $coinCurrencyCode;
+
     /** @var FactoryInterface */
     private $stateMachineFactory;
 
@@ -38,12 +41,14 @@ class UserWalletOperator
      * @param EntityManagerInterface $customerManager
      * @param FactoryInterface $stateMachineFactory
      * @param string $coinProductCode
+     * @param string $coinCurrencyCode
      */
-    public function __construct(EntityManagerInterface $customerManager, FactoryInterface $stateMachineFactory, string $coinProductCode)
+    public function __construct(EntityManagerInterface $customerManager, FactoryInterface $stateMachineFactory, string $coinProductCode, string $coinCurrencyCode)
     {
         $this->customerManager = $customerManager;
         $this->stateMachineFactory = $stateMachineFactory;
         $this->coinProductCode = $coinProductCode;
+        $this->coinCurrencyCode = $coinCurrencyCode;
     }
 
     /**
@@ -93,16 +98,18 @@ class UserWalletOperator
      */
     public function authorizePayment(PaymentInterface $payment): void
     {
-        $details = $payment->getDetails();
+        if ($payment->getCurrencyCode() === $this->coinCurrencyCode) {
+            $details = $payment->getDetails();
 
-        /** @var Customer $customer */
-        $customer = $payment->getOrder()->getCustomer();
-        $customer->setWallet($customer->getWallet() - $payment->getAmount());
-        $details['status'] = PaymentInterface::STATE_COMPLETED;
-        $payment->setDetails($details);
+            /** @var Customer $customer */
+            $customer = $payment->getOrder()->getCustomer();
+            $customer->setWallet($customer->getWallet() - $payment->getAmount());
+            $details['status'] = PaymentInterface::STATE_COMPLETED;
+            $payment->setDetails($details);
 
-        $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-        $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+            $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+        }
     }
 
     /**
@@ -110,15 +117,17 @@ class UserWalletOperator
      */
     public function refundPayment(PaymentInterface $payment): void
     {
-        $details = $payment->getDetails();
+        if ($payment->getCurrencyCode() === $this->coinCurrencyCode) {
+            $details = $payment->getDetails();
 
-        /** @var Customer $customer */
-        $customer = $payment->getOrder()->getCustomer();
-        $customer->setWallet($customer->getWallet() + $payment->getAmount());
-        $details['status'] = PaymentInterface::STATE_REFUNDED;
-        $payment->setDetails($details);
+            /** @var Customer $customer */
+            $customer = $payment->getOrder()->getCustomer();
+            $customer->setWallet($customer->getWallet() + $payment->getAmount());
+            $details['status'] = PaymentInterface::STATE_REFUNDED;
+            $payment->setDetails($details);
 
-        $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-        $stateMachine->apply(PaymentTransitions::TRANSITION_REFUND);
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+            $stateMachine->apply(PaymentTransitions::TRANSITION_REFUND);
+        }
     }
 }
