@@ -15,7 +15,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Sylius\Component\Currency\Model\Currency;
 use Symfony\Component\Intl\Intl;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Translation\Translator;
 
 /**
