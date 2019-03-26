@@ -6,24 +6,24 @@ use Payum\Core\Action\ActionInterface;
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\Request\Capture;
-use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Component\Core\Model\PaymentInterface;
 use BayDay\CoinCurrencyBundle\Model\Customer;
+use Sylius\Component\Core\Repository\CustomerRepositoryInterface;
 
 /**
  * Class CaptureAction.
  */
 class CaptureAction implements ActionInterface
 {
-    /** @var EntityRepository $shopUserRepository */
+    /** @var CustomerRepositoryInterface $shopUserRepository */
     private $customerRepository;
 
     /**
      * CaptureAction constructor.
      *
-     * @param EntityRepository $customerRepository
+     * @param CustomerRepositoryInterface $customerRepository
      */
-    public function __construct(EntityRepository $customerRepository)
+    public function __construct(CustomerRepositoryInterface $customerRepository)
     {
         $this->customerRepository = $customerRepository;
     }
