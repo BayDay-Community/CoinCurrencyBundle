@@ -72,7 +72,7 @@ class UserWalletOperator
         /** @var Customer $customer */
         $customer = $order->getCustomer();
         foreach ($coinOrderItems as $coinOrderItem) {
-            $customer->setWallet($customer->getWallet() + $coinOrderItem->getQuantity()*100);
+            $customer->setWallet($customer->getWallet() + intval($coinOrderItem->getVariant()->getCode())*100);
         }
         $this->customerManager->persist($customer);
         $this->customerManager->flush();
@@ -87,7 +87,7 @@ class UserWalletOperator
         /** @var Customer $customer */
         $customer = $order->getCustomer();
         foreach ($coinOrderItems as $coinOrderItem) {
-            $customer->setWallet($customer->getWallet() - $coinOrderItem->getQuantity()*100);
+            $customer->setWallet($customer->getWallet() - intval($coinOrderItem->getVariant()->getCode())*100);
         }
         $this->customerManager->persist($customer);
         $this->customerManager->flush();
